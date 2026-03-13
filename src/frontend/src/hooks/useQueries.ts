@@ -118,6 +118,121 @@ const DIMPLE_SEED: StudentResults = {
   ],
 };
 
+// Seed data for KEERTHANA (4MU24EC034) — Semester 3
+const KEERTHANA_SEED: StudentResults = {
+  student: {
+    usn: "4MU24EC034",
+    name: "KEERTHANA",
+    dob: "2000-01-01",
+    currentSemester: BigInt(3),
+  },
+  cgpa: 7.56,
+  allSemesterResults: [
+    {
+      semester: BigInt(3),
+      sgpa: 7.56,
+      results: [
+        {
+          subjectCode: "BMATEC301",
+          subjectName: "AV Mathematics III for EC",
+          internalMarks: BigInt(43),
+          externalMarks: BigInt(20),
+          totalMarks: BigInt(63),
+          grade: "C",
+          gradePoints: BigInt(7),
+          credits: BigInt(4),
+        },
+        {
+          subjectCode: "BEC302",
+          subjectName: "Digital System Design Using Verilog",
+          internalMarks: BigInt(42),
+          externalMarks: BigInt(35),
+          totalMarks: BigInt(77),
+          grade: "B",
+          gradePoints: BigInt(8),
+          credits: BigInt(4),
+        },
+        {
+          subjectCode: "BEC303",
+          subjectName: "Electronic Principles and Circuits",
+          internalMarks: BigInt(45),
+          externalMarks: BigInt(20),
+          totalMarks: BigInt(65),
+          grade: "C",
+          gradePoints: BigInt(7),
+          credits: BigInt(4),
+        },
+        {
+          subjectCode: "BEC304",
+          subjectName: "Network Analysis",
+          internalMarks: BigInt(35),
+          externalMarks: BigInt(18),
+          totalMarks: BigInt(53),
+          grade: "E",
+          gradePoints: BigInt(5),
+          credits: BigInt(4),
+        },
+        {
+          subjectCode: "BECL305",
+          subjectName: "Analog and Digital Systems Design Lab",
+          internalMarks: BigInt(46),
+          externalMarks: BigInt(44),
+          totalMarks: BigInt(90),
+          grade: "S",
+          gradePoints: BigInt(10),
+          credits: BigInt(2),
+        },
+        {
+          subjectCode: "BSCK307",
+          subjectName: "Social Connect and Responsibility",
+          internalMarks: BigInt(96),
+          externalMarks: BigInt(0),
+          totalMarks: BigInt(96),
+          grade: "S",
+          gradePoints: BigInt(10),
+          credits: BigInt(1),
+        },
+        {
+          subjectCode: "BNSK359",
+          subjectName: "National Service Scheme",
+          internalMarks: BigInt(95),
+          externalMarks: BigInt(0),
+          totalMarks: BigInt(95),
+          grade: "S",
+          gradePoints: BigInt(10),
+          credits: BigInt(1),
+        },
+        {
+          subjectCode: "BEC358A",
+          subjectName: "Labview Programming",
+          internalMarks: BigInt(50),
+          externalMarks: BigInt(49),
+          totalMarks: BigInt(99),
+          grade: "S",
+          gradePoints: BigInt(10),
+          credits: BigInt(2),
+        },
+        {
+          subjectCode: "BEC306C",
+          subjectName: "Computer Organization and Architecture",
+          internalMarks: BigInt(49),
+          externalMarks: BigInt(25),
+          totalMarks: BigInt(74),
+          grade: "B",
+          gradePoints: BigInt(8),
+          credits: BigInt(3),
+        },
+      ],
+    },
+  ],
+};
+
+// Registry of all seeded students (USN lowercase → seed)
+const SEEDED_STUDENTS: Record<string, StudentResults> = {
+  "4mu24ec024": DIMPLE_SEED,
+  "4mu24ec034": KEERTHANA_SEED,
+};
+
 // ─── Student Queries ─────────────────────────────────────────────
 
 /** Fetch all results for a given USN — used for student result display */
@@ -151,14 +266,13 @@ export function useStudentLogin() {
           throw new Error("Name does not match our records");
         return results;
       } catch (err: unknown) {
-        // If the backend call fails (student not yet seeded), fall back to
-        // the hardcoded mock for USN 4MU24EC024 / Dimple S.
-        const isSeededStudent =
-          usn.toUpperCase() === "4MU24EC024" &&
-          name.trim().toLowerCase() === "dimple s";
+        // If the backend call fails, fall back to seeded mock data.
+        const usnKey = usn.toLowerCase();
+        const nameNorm = name.trim().toLowerCase();
+        const seed = SEEDED_STUDENTS[usnKey];
 
-        if (isSeededStudent) {
-          return DIMPLE_SEED;
+        if (seed && seed.student.name.toLowerCase() === nameNorm) {
+          return seed;
         }
 
         // Re-throw with a clearer message for all other students
@@ -272,8 +386,6 @@ export function useAddOrUpdateResult() {
       if (!actor) throw new Error("Service not ready");
       const dateStr = announcedOn ?? new Date().toISOString().split("T")[0];
       // Cast to any to support the extended backend signature (announcedOn as 8th param).
-      // The backend.d.ts type currently shows 7 params; this forward-compat cast
-      // ensures the value is passed when the backend supports it.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (actor.addOrUpdateResult as any)(
         usn,

@@ -23,6 +23,7 @@ import {
   LogOut,
   TrendingUp,
   Trophy,
+  User,
 } from "lucide-react";
 import {
   Bar,
@@ -342,6 +343,23 @@ export default function ResultPage() {
                 Logout
               </Button>
             </div>
+          </div>
+
+          {/* ─── Welcome Banner ─────────────────────────────────── */}
+          <div
+            className="no-print mt-3 flex items-center gap-3 bg-white/10 rounded-full px-4 py-2 w-fit"
+            data-ocid="result.student.panel"
+          >
+            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20">
+              <User className="w-3.5 h-3.5 text-white" />
+            </div>
+            <span className="text-sm font-semibold text-white">
+              Welcome, {student.name}
+            </span>
+            <span className="text-white/30 select-none">·</span>
+            <span className="font-mono text-xs text-white/80 tracking-wider">
+              USN: {student.usn}
+            </span>
           </div>
         </div>
       </header>
